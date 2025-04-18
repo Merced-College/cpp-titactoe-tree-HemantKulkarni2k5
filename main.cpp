@@ -1,6 +1,9 @@
 #include <iostream>
 #include <vector>
 #include <limits>
+#include <cstdlib>  // for rand() and srand()
+#include <ctime>    // for time()
+
 using namespace std;
 
 const char HUMAN = 'X';
@@ -96,18 +99,25 @@ public:
     }
 
     int findBestMove(const GameState& state) {
+        srand(time(0)); // Seed random
         int bestScore = numeric_limits<int>::min();
-        int bestMove = -1;
+        vector<int> bestMoves;
 
         for (int move : state.getAvailableMoves()) {
             GameState newState = state.makeMove(move, COMPUTER);
             int score = minimax(newState, false);
             if (score > bestScore) {
                 bestScore = score;
-                bestMove = move;
+                bestMoves.clear();
+                bestMoves.push_back(move);
+            } else if (score == bestScore) {
+                bestMoves.push_back(move);
             }
         }
-        return bestMove;
+
+        // Pick a random move from bestMoves
+        int randomIndex = rand() % bestMoves.size();
+        return bestMoves[randomIndex];
     }
 };
 
